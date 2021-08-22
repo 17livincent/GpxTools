@@ -9,8 +9,10 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageOps
 
-IMAGEWIDTH = 500
-IMAGEHEIGHT = 500
+IMAGEWIDTH = 450
+IMAGEHEIGHT = 450
+TOTALMARGINWIDTH = 50
+TOTALMARGINHEIGHT = 50
 
 TRACKPOINT = {
     'time': '',
@@ -69,6 +71,7 @@ def getGpxSummary(trackPointList):
     maxLon = 0
     minLat = 0
     maxLat = 0
+    hdw = 0
 
     first = True
 
@@ -93,6 +96,8 @@ def getGpxSummary(trackPointList):
 
         first = False
 
+    hdw = (maxLat - minLat) / (maxLon - minLon)
+
     print('Summary:')
     print('Min elevation: ' + str(minElev))
     print('Max elevation: ' + str(maxElev))
@@ -100,6 +105,7 @@ def getGpxSummary(trackPointList):
     print('Max longitude: ' + str(maxLon))
     print('Min latitude: ' + str(minLat))
     print('Max latitude: ' + str(maxLat))
+    print('Height / width: ' + str(hdw))
 
     return {
         'minElev': minElev,
@@ -107,7 +113,8 @@ def getGpxSummary(trackPointList):
         'minLon': minLon,
         'maxLon': maxLon,
         'minLat': minLat,
-        'maxLat': maxLat
+        'maxLat': maxLat,
+        'hdw': hdw
     }
 
 
@@ -115,12 +122,12 @@ def createImage(trackPointList, mm):
     '''
         Creates the route image with the track point list and min/max values.
     '''
-    profile = Image.new(mode="RGB", size=(IMAGEWIDTH, IMAGEHEIGHT), color = 'black')
+    profile = Image.new(mode="RGB", size=(IMAGEWIDTH + TOTALMARGINWIDTH, int(IMAGEHEIGHT * mm['hdw']) + TOTALMARGINHEIGHT), color = 'black')
     
     for i in trackPointList:
         # normalize lon and lat between 0 and image dimension
-        i['lon'] = (i['lon'] - mm['minLon']) / (mm['maxLon'] - mm['minLon']) * (IMAGEWIDTH - 1)
-        i['lat'] = (i['lat'] - mm['minLat']) / (mm['maxLat'] - mm['minLat']) * (IMAGEHEIGHT - 1)
+        i['lon'] = int(TOTALMARGINWIDTH / 2) + (i['lon'] - mm['minLon']) / (mm['maxLon'] - mm['minLon']) * (IMAGEWIDTH - 1)
+        i['lat'] = int(TOTALMARGINHEIGHT / 2) + (i['lat'] - mm['minLat']) / (mm['maxLat'] - mm['minLat']) * (IMAGEHEIGHT - 1) * mm['hdw']
         # normalize elevation between 0 and 255*2
         i['elev'] = (i['elev'] - mm['minElev']) / (mm['maxElev'] - mm['minElev']) * (255 * 2)
     
