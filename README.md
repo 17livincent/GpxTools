@@ -7,4 +7,4 @@ Creates a route image with elevation color-gradient
 
 Example:
 
-![Gpx2Pic.py example route picture](examples/Example2.png?raw=true)
+![Gpx2Pic.py example route picture](https://github.com/17livincent/GpxTools/blob/master/examples/Example2.PNG?raw=true)
