@@ -33,7 +33,7 @@ def readFile(xml_file):
         tree = ET.parse(xml_file)
         root = tree.getroot()
 
-        # find trk        
+        # find trk
         trkIndex = -1
         for i in range(0, len(root)):
             if(root[i].tag.rpartition('}')[2] == 'trk'):
@@ -123,14 +123,14 @@ def createImage(trackPointList, mm):
         Creates the route image with the track point list and min/max values.
     '''
     profile = Image.new(mode="RGB", size=(IMAGEWIDTH + TOTALMARGINWIDTH, int(IMAGEHEIGHT * mm['hdw']) + TOTALMARGINHEIGHT), color = 'black')
-    
+
     for i in trackPointList:
         # normalize lon and lat between 0 and image dimension
         i['lon'] = int(TOTALMARGINWIDTH / 2) + (i['lon'] - mm['minLon']) / (mm['maxLon'] - mm['minLon']) * (IMAGEWIDTH - 1)
         i['lat'] = int(TOTALMARGINHEIGHT / 2) + (i['lat'] - mm['minLat']) / (mm['maxLat'] - mm['minLat']) * (IMAGEHEIGHT - 1) * mm['hdw']
         # normalize elevation between 0 and 255*2
         i['elev'] = (i['elev'] - mm['minElev']) / (mm['maxElev'] - mm['minElev']) * (255 * 2)
-    
+
     #getSummary(trackPointList)
 
     for i in trackPointList:
